@@ -1,0 +1,888 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Brick by Brick — Help Me Buy a Home</title>
+
+  <style>
+    :root{
+      --bg1:#f7f3ee;
+      --bg2:#eef6f3;
+      --ink:#1f2937;
+      --muted:#5b6472;
+      --card:rgba(255,255,255,.78);
+      --border:rgba(31,41,55,.10);
+      --shadow: 0 10px 30px rgba(17,24,39,.08);
+
+      --accent:#2a9d8f;
+      --danger:#e76f51;
+
+      --btn:#2a9d8f;
+      --btnText:#ffffff;
+      --btnSoft:rgba(42,157,143,.10);
+      --btnBorder:rgba(42,157,143,.22);
+
+      /* Darker canvas so pixels/outline are visible */
+      --canvasBg: rgba(17,24,39,.16);
+      --canvasBorder: rgba(31,41,55,.18);
+    }
+
+    *{ box-sizing:border-box; }
+    html, body { height:100%; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color:var(--ink);
+      background:
+        radial-gradient(900px 500px at 20% 0%, rgba(42,157,143,.10), transparent 55%),
+        radial-gradient(900px 500px at 80% 10%, rgba(231,111,81,.10), transparent 55%),
+        radial-gradient(900px 500px at 50% 100%, rgba(233,196,106,.12), transparent 55%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      padding: 22px;
+      display:grid;
+      place-items:center;
+    }
+
+    .wrap{
+      width:min(1100px, 100%);
+      display:grid;
+      gap:14px;
+    }
+
+    .top{
+      border:1px solid var(--border);
+      border-radius: 18px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      padding: 18px 18px 16px;
+    }
+
+    h1{
+      margin:0 0 6px;
+      letter-spacing:-.03em;
+      font-size: clamp(22px, 2.4vw, 34px);
+      line-height:1.1;
+    }
+
+    .sub{
+      margin:0;
+      color:var(--muted);
+      line-height:1.45;
+      font-size: 14px;
+      max-width: 92ch;
+    }
+
+    .metaRow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-top: 12px;
+    }
+
+    .chip{
+      border:1px solid rgba(31,41,55,.10);
+      background: rgba(255,255,255,.70);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 13px;
+      color: var(--muted);
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+    .chip b{ color: var(--ink); }
+    .dot{
+      width:8px; height:8px; border-radius:999px;
+      background: rgba(42,157,143,.85);
+      box-shadow: 0 0 0 4px rgba(42,157,143,.10);
+      display:inline-block;
+    }
+
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      margin-top: 14px;
+    }
+
+    button{
+      border:1px solid var(--btnBorder);
+      background: var(--btnSoft);
+      color: var(--ink);
+      padding: 12px 14px;
+      border-radius: 14px;
+      cursor:pointer;
+      font-weight: 800;
+      letter-spacing:-.01em;
+      transition: transform 120ms ease, background 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+    }
+    button:hover{
+      transform: translateY(-1px);
+      background: rgba(42,157,143,.14);
+      border-color: rgba(42,157,143,.32);
+      box-shadow: 0 10px 18px rgba(42,157,143,.10);
+    }
+    button:active{ transform: translateY(0px) scale(.99); }
+
+    .primary{
+      background: var(--btn);
+      color: var(--btnText);
+      border-color: rgba(42,157,143,.35);
+    }
+    .primary:hover{
+      background: rgba(42,157,143,.92);
+      box-shadow: 0 14px 24px rgba(42,157,143,.18);
+    }
+
+    .bar{
+      margin-top: 12px;
+      height: 12px;
+      background: rgba(31,41,55,.06);
+      border:1px solid rgba(31,41,55,.08);
+      border-radius: 999px;
+      overflow:hidden;
+    }
+    .bar > div{
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg, rgba(42,157,143,.92), rgba(233,196,106,.90), rgba(244,162,97,.90));
+      transition: width 260ms ease;
+    }
+
+    .mode{
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .mode b{ color: var(--accent); }
+    .warn{ color: var(--danger); font-weight: 800; }
+    .hint{ color: var(--muted); font-size: 13px; }
+
+    .panel{
+      border:1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(255,255,255,.72);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .canvasHeader{
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(31,41,55,.08);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .canvasHeader b{ color: var(--ink); }
+
+    .canvasWrap{
+      padding: 12px;
+      display:grid;
+      gap:10px;
+      background: rgba(17,24,39,.04);
+    }
+    .canvasStack{
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+    }
+    canvas.main{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      display:block;
+      border-radius: 14px;
+      image-rendering: pixelated;
+      border: 1px solid var(--canvasBorder);
+      background: var(--canvasBg);
+    }
+    canvas.overlay{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      display:block;
+      border-radius: 14px;
+      image-rendering: pixelated;
+      pointer-events:none;
+    }
+
+    .footer{
+      padding: 12px 16px 14px;
+      border-top: 1px solid rgba(31,41,55,.08);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    a{
+      color: rgba(31,41,55,.88);
+      text-decoration:none;
+      border-bottom: 1px dotted rgba(31,41,55,.25);
+    }
+    a:hover{ border-bottom-color: rgba(31,41,55,.55); }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(31,41,55,.10);
+      background: rgba(255,255,255,.70);
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .tag strong{ color: var(--ink); }
+
+    /* Magnifier */
+    .mag{
+      position: fixed;
+      width: 260px;
+      height: 260px;
+      border-radius: 16px;
+      border: 1px solid rgba(31,41,55,.14);
+      background: rgba(255,255,255,.90);
+      box-shadow: 0 18px 60px rgba(17,24,39,.14);
+      backdrop-filter: blur(10px);
+      display:none;
+      pointer-events:none;
+      z-index: 50;
+      padding: 10px;
+    }
+    .magHead{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom: 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .magHead b{ color: var(--ink); }
+    .magCanvas{
+      width: 100%;
+      height: calc(100% - 22px);
+      border-radius: 12px;
+      border: 1px solid rgba(31,41,55,.10);
+      image-rendering: pixelated;
+      background: rgba(255,255,255,.75);
+      display:block;
+    }
+
+    /* Modal */
+    .modalBack{
+      position:fixed;
+      inset:0;
+      background: rgba(31,41,55,.35);
+      display:none;
+      place-items:center;
+      padding: 18px;
+      z-index: 60;
+    }
+    .modal{
+      width:min(700px, 100%);
+      border: 1px solid rgba(31,41,55,.12);
+      background: rgba(255,255,255,.92);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 24px 90px rgba(17,24,39,.16);
+      backdrop-filter: blur(12px);
+      color: var(--ink);
+    }
+    .modal h2{ margin: 0 0 6px; font-size: 18px; letter-spacing: -.01em; }
+    .modal p{ margin: 0 0 12px; color: var(--muted); line-height: 1.45; font-size: 13px; }
+
+    .payRow{ display:flex; gap:10px; flex-wrap:wrap; margin: 12px 0; }
+    .payLink{
+      flex: 1 1 260px;
+      border: 1px solid rgba(31,41,55,.10);
+      background: rgba(255,255,255,.78);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    .payLink .title{ font-weight: 850; margin-bottom: 6px; letter-spacing: -.01em; }
+    .payLink .desc{ color: var(--muted); font-size: 12px; line-height: 1.35; margin-bottom: 8px; }
+    .payLink a{
+      display:inline-block;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(42,157,143,.22);
+      background: rgba(42,157,143,.10);
+      font-weight: 800;
+      border-bottom:none;
+    }
+
+    .modalActions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:space-between;
+      align-items:center;
+      margin-top: 10px;
+    }
+    .qty{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .qty button{
+      padding: 10px 12px;
+      border-radius: 999px;
+      font-weight: 800;
+      background: rgba(255,255,255,.85);
+      border-color: rgba(31,41,55,.12);
+    }
+    .qty button.active{
+      border-color: rgba(42,157,143,.35);
+      background: rgba(42,157,143,.12);
+    }
+    .rightActions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      align-items:center;
+    }
+    .tiny{ font-size: 12px; color: var(--muted); }
+
+    @media (max-width: 520px){
+      body{ padding: 14px; }
+      .top{ padding: 16px; }
+      .canvasWrap{ padding: 10px; }
+      .mag{ width: 220px; height: 220px; }
+    }
+  </style>
+</head>
+
+<body>
+<script>
+  // =========================
+  // EDIT THESE LINKS (yours)
+  // =========================
+  const PAYPAL_ME = "https://www.paypal.me/YOURNAME/1";
+  const BUYMEACOFFEE = "https://www.buymeacoffee.com/YOURNAME";
+
+  // =========================
+  // SETTINGS
+  // =========================
+  const GRID = 1000;                    // 1,000,000 pixels
+  const GOAL_AUD = 1_000_000;
+  const ALREADY_SAVED_AUD = 128_056;    // this will be prefilled visually across the whole canvas
+  const COST_PER_PIXEL_AUD = 1;
+
+  // Magnifier
+  const MAG_SIZE = 21;
+  const MAG_ZOOM = 16;
+
+  // Prefill seed (change to get a different "random" but stable layout)
+  const PREFILL_SEED = 20260102;
+
+  // Make placed pixels more saturated by using punchier region colors
+</script>
+
+<div class="wrap">
+  <div class="top">
+    <h1>Brick by Brick 🏡</h1>
+    <p class="sub">
+      I’m a millennial chasing the same dream as so many others: owning a home.
+      On my salary it feels impossible, so I’m trying something a little crazy: raising <b>$1 at a time</b> until I reach <b>$1,000,000 AUD</b>.
+      If you can help, it would mean the world,and let’s see where this gets us.
+    </p>
+
+    <div class="metaRow">
+      <span class="chip"><span class="dot"></span><b id="raised">$0</b> raised</span>
+      <span class="chip"><b id="left">$0</b> to go</span>
+      <span class="chip"><b id="pct">0%</b> complete</span>
+    </div>
+
+    <div class="actions">
+      <button id="tipBtn" class="primary">Tip → place pixels</button>
+    </div>
+
+    <div class="bar"><div id="barFill"></div></div>
+    <div class="mode" id="modeLine">Mode: <span class="warn">view-only</span> <span class="hint">· Tip → confirm → hover to zoom → click to place.</span></div>
+  </div>
+
+  <div class="panel">
+    <div class="canvasHeader">
+      <div>
+        <b>Place pixels anywhere</b> — hover for a close-up, click to place (after you’ve tipped).
+        <div class="tiny">This preview includes <b>$128,056</b> already saved, shown as randomly filled pixels across the entire canvas.</div>
+      </div>
+      <div class="tag">1,000,000 pixels · <strong>$1 each</strong></div>
+    </div>
+
+    <div class="canvasWrap">
+      <div class="canvasStack">
+        <canvas id="c" class="main" width="1000" height="1000"></canvas>
+        <canvas id="o" class="overlay" width="1000" height="1000"></canvas>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div>
+        Tip links:
+        <a id="ppLink" href="#" target="_blank" rel="noopener">PayPal</a> ·
+        <a id="bmcLink" href="#" target="_blank" rel="noopener">Buy Me a Coffee</a>
+      </div>
+      <div class="tag">Already saved: <strong>$128,056</strong></div>
+    </div>
+  </div>
+</div>
+
+<!-- Magnifier -->
+<div id="mag" class="mag" aria-hidden="true">
+  <div class="magHead">
+    <span>Close-up</span>
+    <span><b id="magXY">x:0 y:0</b></span>
+  </div>
+  <canvas id="magC" class="magCanvas"></canvas>
+</div>
+
+<!-- Payment Modal -->
+<div class="modalBack" id="modalBack" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <div class="modal">
+    <h2 id="mTitle">Tip, then place pixels</h2>
+    <p>
+      Pick a payment method. Then come back and click <b>“I’ve paid — let me place”</b> to unlock pixels.
+      (This preview can’t verify payments automatically yet.)
+    </p>
+
+    <div class="payRow">
+      <div class="payLink">
+        <div class="title">PayPal</div>
+        <div class="desc">Tip an amount that matches how many pixels you want to place.</div>
+        <a id="paypalBtn" href="#" target="_blank" rel="noopener">Open PayPal</a>
+      </div>
+      <div class="payLink">
+        <div class="title">Buy Me a Coffee</div>
+        <div class="desc">If one coffee isn’t $1, treat one coffee as a small bundle of pixels.</div>
+        <a id="bmcBtn" href="#" target="_blank" rel="noopener">Open BMC</a>
+      </div>
+    </div>
+
+    <div class="modalActions">
+      <div class="qty">
+        <span class="tiny">Pixels to place:</span>
+        <button class="qtyBtn active" data-qty="1">1</button>
+        <button class="qtyBtn" data-qty="5">5</button>
+        <button class="qtyBtn" data-qty="10">10</button>
+        <button class="qtyBtn" data-qty="25">25</button>
+      </div>
+      <div class="rightActions">
+        <button id="cancelPay">Cancel</button>
+        <button id="confirmPaid" class="primary">I’ve paid — let me place</button>
+      </div>
+    </div>
+
+    <p class="tiny" style="margin-top:10px;">
+      Public version: payments verified via webhooks, then credits are granted to place pixels.
+    </p>
+  </div>
+</div>
+
+<script>
+  // ===== Links =====
+  const paypalBtn = document.getElementById("paypalBtn");
+  const bmcBtn = document.getElementById("bmcBtn");
+  const ppLink = document.getElementById("ppLink");
+  const bmcLink = document.getElementById("bmcLink");
+
+  paypalBtn.href = PAYPAL_ME;
+  bmcBtn.href = BUYMEACOFFEE;
+  ppLink.href = PAYPAL_ME;
+  bmcLink.href = BUYMEACOFFEE;
+
+  // ===== DOM =====
+  const canvas = document.getElementById("c");
+  const ctx = canvas.getContext("2d", { willReadFrequently: false });
+
+  const overlay = document.getElementById("o");
+  const octx = overlay.getContext("2d");
+
+  const mag = document.getElementById("mag");
+  const magXY = document.getElementById("magXY");
+  const magC = document.getElementById("magC");
+  const mctx = magC.getContext("2d");
+
+  const raisedEl = document.getElementById("raised");
+  const leftEl = document.getElementById("left");
+  const pctEl = document.getElementById("pct");
+  const barFill = document.getElementById("barFill");
+  const modeLine = document.getElementById("modeLine");
+  const modalBack = document.getElementById("modalBack");
+
+  const fmtAUD = (n) => n.toLocaleString("en-AU", { style:"currency", currency:"AUD" });
+
+  // ===== State =====
+  const TOTAL = GRID * GRID;
+  const LS_KEY = "million_house_pixels_prefill_all_v1";
+
+  let userSet = new Set();     // placed by this browser
+  let baseSet = new Set();     // prefilled pixels representing ALREADY_SAVED_AUD
+  let placementsRemaining = 0;
+  let selectedQty = 1;
+
+  let lastClientX = 0;
+  let lastClientY = 0;
+
+  function loadUser() {
+    try {
+      const raw = localStorage.getItem(LS_KEY);
+      if (!raw) return;
+      const arr = JSON.parse(raw);
+      if (Array.isArray(arr)) {
+        userSet = new Set(arr.filter(n => Number.isInteger(n) && n >= 0 && n < TOTAL));
+      }
+    } catch {}
+  }
+  function saveUser() {
+    try {
+      localStorage.setItem(LS_KEY, JSON.stringify(Array.from(userSet)));
+    } catch {
+      console.warn("localStorage full — can't save more pixels in this preview.");
+    }
+  }
+
+  // ===== Regions (for coloring only) =====
+  // 0 = sky, 1 = grass, 2 = walls, 3 = roof, 4 = chimney, 5 = windows
+  const region = new Uint8Array(TOTAL);
+  function idx(x,y){ return y*GRID + x; }
+
+  function buildRegions(){
+    const grassY = Math.floor(GRID * 0.90);
+    for (let y = grassY; y < GRID; y++){
+      for (let x = 0; x < GRID; x++){
+        region[idx(x,y)] = 1;
+      }
+    }
+
+    const wallLeft = 200, wallRight = 799;
+    const wallTop = 360, wallBottom = 900;
+
+    const apexX = 500, apexY = 120;
+    const baseY = wallTop;
+    const roofLeftBaseX = 160, roofRightBaseX = 840;
+
+    for (let y = wallTop; y <= wallBottom; y++){
+      for (let x = wallLeft; x <= wallRight; x++){
+        region[idx(x,y)] = 2;
+      }
+    }
+
+    for (let y = apexY; y <= baseY; y++){
+      const t = (y - apexY) / (baseY - apexY);
+      const leftX = Math.round(apexX + (roofLeftBaseX - apexX) * t);
+      const rightX = Math.round(apexX + (roofRightBaseX - apexX) * t);
+      for (let x = leftX; x <= rightX; x++){
+        region[idx(x,y)] = 3;
+      }
+    }
+
+    for (let y = 160; y <= 320; y++){
+      for (let x = 670; x <= 720; x++){
+        region[idx(x,y)] = 4;
+      }
+    }
+
+    const wins = [
+      {x1: 290, x2: 380, y1: 520, y2: 610},
+      {x1: 620, x2: 710, y1: 520, y2: 610},
+    ];
+    for (const w of wins){
+      for (let y = w.y1; y <= w.y2; y++){
+        for (let x = w.x1; x <= w.x2; x++){
+          region[idx(x,y)] = 5;
+        }
+      }
+    }
+
+    for (let y = 680; y <= 900; y++){
+      for (let x = 465; x <= 535; x++){
+        region[idx(x,y)] = 0;
+      }
+    }
+  }
+
+  // ===== Seeded RNG (stable random) =====
+  function mulberry32(seed){
+    let t = seed >>> 0;
+    return function(){
+      t += 0x6D2B79F5;
+      let r = Math.imul(t ^ (t >>> 15), 1 | t);
+      r ^= r + Math.imul(r ^ (r >>> 7), 61 | r);
+      return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  // Prefill across the ENTIRE canvas (all 1,000,000 pixels eligible)
+  function buildBasePrefill(){
+    const target = Math.max(0, Math.min(ALREADY_SAVED_AUD, TOTAL));
+    const rand = mulberry32(PREFILL_SEED);
+
+    // We fill by sampling unique indices without building a 1M array:
+    // Use a Set and draw until we hit target.
+    baseSet = new Set();
+    while (baseSet.size < target){
+      const i = Math.floor(rand() * TOTAL);
+      baseSet.add(i);
+    }
+  }
+
+  // ===== Rendering =====
+  const img = ctx.createImageData(GRID, GRID);
+  const data = img.data;
+
+  function setPixel(i, r,g,b,a){
+    const p = i * 4;
+    data[p] = r; data[p+1] = g; data[p+2] = b; data[p+3] = a;
+  }
+
+  // Slightly darker outlines so house is visible even with prefill noise
+  function blueprintColor(i){
+    const r = region[i];
+    if (r === 0) return [92, 165, 228, 16];   // sky
+    if (r === 1) return [110, 198, 168, 16];  // grass
+    if (r === 2) return [165, 120, 70, 30];   // walls
+    if (r === 3) return [150, 80, 90, 32];    // roof
+    if (r === 4) return [120, 62, 72, 34];    // chimney
+    if (r === 5) return [140, 185, 220, 26];  // windows
+    return [92, 165, 228, 16];
+  }
+
+  // More saturated placed colors (punchier)
+  function placedColor(i){
+    const r = region[i];
+    if (r === 0) return [66, 145, 235, 245];   // sky (more vivid)
+    if (r === 1) return [52, 210, 155, 245];   // grass (more vivid)
+    if (r === 2) return [214, 147, 76, 245];   // walls (warmer, richer)
+    if (r === 3) return [197, 72, 88, 245];    // roof (richer red)
+    if (r === 4) return [160, 52, 70, 245];    // chimney
+    if (r === 5) return [118, 205, 255, 245];  // windows (brighter)
+    return [66, 145, 235, 245];
+  }
+
+  function isOccupied(i){
+    return baseSet.has(i) || userSet.has(i);
+  }
+
+  function renderAll(){
+    for (let i = 0; i < TOTAL; i++){
+      const [r,g,b,a] = isOccupied(i) ? placedColor(i) : blueprintColor(i);
+      setPixel(i, r,g,b,a);
+    }
+    ctx.putImageData(img, 0, 0);
+  }
+
+  function renderOne(i){
+    const [r,g,b,a] = isOccupied(i) ? placedColor(i) : blueprintColor(i);
+    setPixel(i, r,g,b,a);
+    ctx.putImageData(img, 0, 0);
+  }
+
+  function updateStats(){
+    const userCount = userSet.size;
+    const totalRaised = ALREADY_SAVED_AUD + (userCount * COST_PER_PIXEL_AUD);
+    const left = Math.max(0, GOAL_AUD - totalRaised);
+    const pct = Math.min(100, (totalRaised / GOAL_AUD) * 100);
+
+    raisedEl.textContent = fmtAUD(totalRaised);
+    leftEl.textContent = fmtAUD(left);
+    pctEl.textContent = `${pct.toFixed(1)}%`;
+    barFill.style.width = `${pct}%`;
+
+    if (placementsRemaining > 0){
+      modeLine.innerHTML = `Mode: <b>place</b> · <span class="hint">You have <b>${placementsRemaining}</b> pixel(s) to place.</span>`;
+    } else {
+      modeLine.innerHTML = `Mode: <span class="warn">view-only</span> <span class="hint">· Tip → confirm → hover to zoom → click to place.</span>`;
+    }
+  }
+
+  // ===== Mouse -> pixel index =====
+  function canvasToXY(ev){
+    const rect = canvas.getBoundingClientRect();
+    const mx = (ev.clientX - rect.left) / rect.width;
+    const my = (ev.clientY - rect.top) / rect.height;
+    const x = Math.max(0, Math.min(GRID - 1, Math.floor(mx * GRID)));
+    const y = Math.max(0, Math.min(GRID - 1, Math.floor(my * GRID)));
+    return {x,y};
+  }
+  function toIndex(x,y){ return y*GRID + x; }
+
+  // ===== Hover highlight =====
+  let lastHover = null;
+  function drawHoverBox(x,y){
+    octx.clearRect(0,0,overlay.width,overlay.height);
+    octx.strokeStyle = "rgba(255,255,255,0.70)";
+    octx.lineWidth = 2;
+    octx.strokeRect(x-2 + 0.5, y-2 + 0.5, 5, 5);
+
+    octx.strokeStyle = "rgba(42,157,143,0.95)";
+    octx.lineWidth = 1;
+    octx.strokeRect(x + 0.5, y + 0.5, 1, 1);
+  }
+
+  // ===== Magnifier =====
+  const magW = MAG_SIZE * MAG_ZOOM;
+  const magH = MAG_SIZE * MAG_ZOOM;
+  magC.width = magW;
+  magC.height = magH;
+
+  const magImg = mctx.createImageData(MAG_SIZE, MAG_SIZE);
+  const magData = magImg.data;
+
+  const tmp = document.createElement("canvas");
+  tmp.width = MAG_SIZE; tmp.height = MAG_SIZE;
+  const tctx = tmp.getContext("2d");
+
+  function updateMagnifier(x,y, clientX, clientY){
+    const pad = 14;
+    const w = mag.offsetWidth;
+    const h = mag.offsetHeight;
+    let left = clientX + pad;
+    let top = clientY + pad;
+    if (left + w > window.innerWidth - 8) left = clientX - w - pad;
+    if (top + h > window.innerHeight - 8) top = clientY - h - pad;
+    mag.style.left = left + "px";
+    mag.style.top = top + "px";
+
+    magXY.textContent = `x:${x} y:${y}`;
+
+    const half = Math.floor(MAG_SIZE / 2);
+    let k = 0;
+    for (let yy = y - half; yy <= y + half; yy++){
+      for (let xx = x - half; xx <= x + half; xx++){
+        const sx = Math.max(0, Math.min(GRID - 1, xx));
+        const sy = Math.max(0, Math.min(GRID - 1, yy));
+        const si = (sy * GRID + sx) * 4;
+
+        magData[k]   = data[si];
+        magData[k+1] = data[si+1];
+        magData[k+2] = data[si+2];
+        magData[k+3] = data[si+3];
+        k += 4;
+      }
+    }
+
+    tctx.putImageData(magImg, 0, 0);
+    mctx.imageSmoothingEnabled = false;
+    mctx.clearRect(0,0,magW,magH);
+    mctx.drawImage(tmp, 0, 0, magW, magH);
+
+    mctx.save();
+    mctx.strokeStyle = "rgba(31,41,55,0.55)";
+    mctx.lineWidth = 2;
+    const center = Math.floor(MAG_SIZE/2) * MAG_ZOOM + MAG_ZOOM/2;
+    mctx.beginPath();
+    mctx.moveTo(center, 0); mctx.lineTo(center, magH);
+    mctx.moveTo(0, center); mctx.lineTo(magW, center);
+    mctx.stroke();
+    mctx.restore();
+
+    mctx.save();
+    mctx.strokeStyle = "rgba(42,157,143,0.98)";
+    mctx.lineWidth = 3;
+    const px = Math.floor(MAG_SIZE/2) * MAG_ZOOM;
+    const py = Math.floor(MAG_SIZE/2) * MAG_ZOOM;
+    mctx.strokeRect(px + 1.5, py + 1.5, MAG_ZOOM - 3, MAG_ZOOM - 3);
+    mctx.restore();
+  }
+
+  // ===== Placement =====
+  canvas.addEventListener("click", (ev) => {
+    if (placementsRemaining <= 0) return;
+
+    const {x,y} = canvasToXY(ev);
+    const i = toIndex(x,y);
+
+    // block placing on prefilled pixels
+    if (isOccupied(i)) return;
+
+    userSet.add(i);
+    placementsRemaining--;
+    saveUser();
+
+    renderOne(i);
+    updateStats();
+
+    lastHover = {x,y};
+    drawHoverBox(x,y);
+    if (mag.style.display !== "none") {
+      updateMagnifier(x,y, lastClientX, lastClientY);
+    }
+  });
+
+  canvas.addEventListener("mousemove", (ev) => {
+    lastClientX = ev.clientX;
+    lastClientY = ev.clientY;
+
+    const {x,y} = canvasToXY(ev);
+    lastHover = {x,y};
+
+    drawHoverBox(x,y);
+    mag.style.display = "block";
+    updateMagnifier(x,y, ev.clientX, ev.clientY);
+  });
+
+  canvas.addEventListener("mouseleave", () => {
+    lastHover = null;
+    octx.clearRect(0,0,overlay.width,overlay.height);
+    mag.style.display = "none";
+  });
+
+  // ===== Modal =====
+  document.getElementById("tipBtn").addEventListener("click", () => {
+    modalBack.style.display = "grid";
+  });
+
+  document.getElementById("cancelPay").addEventListener("click", () => {
+    modalBack.style.display = "none";
+  });
+
+  modalBack.addEventListener("click", (e) => {
+    if (e.target === modalBack) modalBack.style.display = "none";
+  });
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") modalBack.style.display = "none";
+  });
+
+  document.getElementById("confirmPaid").addEventListener("click", () => {
+    modalBack.style.display = "none";
+    placementsRemaining += selectedQty;
+    updateStats();
+  });
+
+  const qtyBtns = Array.from(document.querySelectorAll(".qtyBtn"));
+  qtyBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      qtyBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      selectedQty = parseInt(btn.dataset.qty, 10) || 1;
+    });
+  });
+
+  // ===== Init =====
+  loadUser();
+  buildRegions();
+  buildBasePrefill();   // <-- fill 128,056 random pixels across the entire canvas
+  renderAll();
+  updateStats();
+</script>
+
+</body>
+</html>
