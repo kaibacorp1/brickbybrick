@@ -261,8 +261,7 @@
 
 <body>
 <script>
-  // ====== EDIT THESE LINKS ======
-  const PAYPAL_ME = "https://paypal.me/brickbybrick";
+  // ====== EDIT THIS LINK ======
   const BUYMEACOFFEE = "https://buymeacoffee.com/brickbybrick";
 
   // ====== SETTINGS ======
@@ -324,8 +323,7 @@
 
     <div class="footer">
       <div>
-        Tip links:
-        <a id="ppLink" href="#" target="_blank" rel="noopener">PayPal</a> ·
+        Tip link:
         <a id="bmcLink" href="#" target="_blank" rel="noopener">Buy Me a Coffee</a>
       </div>
       <div class="tag">Already saved: <strong>$128,056</strong></div>
@@ -347,7 +345,7 @@
   <div class="modal">
     <h2 id="mTitle">Tip, then place pixels</h2>
     <p>
-      Pick a payment method. Then come back and click <b>“I’ve paid — let me place”</b> to unlock pixels.
+      Tip via Buy Me a Coffee. Then come back and click <b>“I’ve paid — let me place”</b> to unlock pixels.
       (Payment verification can be added later; this version is “honesty mode”.)
     </p>
 
@@ -377,12 +375,10 @@
 
 <script>
   // Links
-  const paypalBtn = document.getElementById("paypalBtn");
   const bmcBtn = document.getElementById("bmcBtn");
-  const ppLink = document.getElementById("ppLink");
   const bmcLink = document.getElementById("bmcLink");
-  paypalBtn.href = PAYPAL_ME; bmcBtn.href = BUYMEACOFFEE;
-  ppLink.href = PAYPAL_ME; bmcLink.href = BUYMEACOFFEE;
+  bmcBtn.href = BUYMEACOFFEE;
+  bmcLink.href = BUYMEACOFFEE;
 
   // DOM
   const canvas = document.getElementById("c");
