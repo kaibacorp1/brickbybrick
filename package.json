@@ -1,0 +1,9 @@
+{
+  "name": "brick-by-brick",
+  "private": true,
+  "version": "1.0.0",
+  "description": "1,000,000-pixel house fundraiser (static + serverless API)",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.4"
+  }
+}
