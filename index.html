@@ -758,18 +758,23 @@
   renderAll();
   updateStats();
 
-  // First load then poll
+   // First load then poll
   pullPixels(true).then(() => {
     setInterval(() => pullPixels(false), POLL_MS);
   });
-
-  This is a personal project, not a charity or investment.
-  You won’t receive anything in return — the pixels are just for fun.
-  You’re simply helping one person save for a home, one dollar at a time.
-
-    
-  <a href="/terms.html">Important Information & Disclosure</a>
-
 </script>
+
+<div style="margin-top:16px; font-size:13px; color:#6b7280; text-align:center;">
+  <p>
+    This is a personal project, not a charity or investment.<br>
+    You won’t receive anything in return — the pixels are just for fun.<br>
+    You’re simply helping one person save for a home, one dollar at a time.
+  </p>
+
+  <p>
+    <a href="/terms.html">Important Information & Disclosure</a>
+  </p>
+</div>
+
 </body>
 </html>
